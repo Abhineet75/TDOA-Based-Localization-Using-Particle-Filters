@@ -1,6 +1,4 @@
-Here is the updated README with the new section on geometric testing integrated right before the Usage and Dependencies sections. 
 
-***
 
 # TDOA-Based Static Transmitter Localization using Simulated Annealing Particle Filters
 
