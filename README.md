@@ -1,13 +1,16 @@
+Here is the updated README with the new section on geometric testing integrated right before the Usage and Dependencies sections. 
+
+***
+
 # TDOA-Based Static Transmitter Localization using Simulated Annealing Particle Filters
 
 ## Overview
 
 This repository contains a robust Python implementation of a Time Difference of Arrival (TDOA) localization algorithm. It utilizes a Simulated Annealing Particle Filter (SAPF) to accurately estimate the spatial coordinates of a static radio frequency (RF) transmitter using a network of distributed receivers. 
 
-This work is based on the contents of the paper : POSITIONING USING TIME-DIFFERENCE OF ARRIVAL MEASUREMENTS, by Fredrik Gustafsson and Fredrik Gunnarsson, and marks my first effort in an end-to-end research to implementation, which I did with the help of one of my signal processing professors at IIT Delhi.  
+This work is based on the contents of the paper: *POSITIONING USING TIME-DIFFERENCE OF ARRIVAL MEASUREMENTS*, by Fredrik Gustafsson and Fredrik Gunnarsson, and marks my first effort in an end-to-end research to implementation, which I did with the help of one of my signal processing professors at IIT Delhi.  
 
-
-Standard particle filters suffer heavily from particle impoverishment when tracking static targets in highly non-convex TDOA cost functions This project solves that by dynamically modulating the measurement covariance and process noise over time, allowing the particles to effectively search the global space before converging on the Minimum Mean Square Error (MMSE) estimate.
+Standard particle filters suffer heavily from particle impoverishment when tracking static targets in highly non-convex TDOA cost functions. This project solves that by dynamically modulating the measurement covariance and process noise over time, allowing the particles to effectively search the global space before converging on the Minimum Mean Square Error (MMSE) estimate.
 
 ## Core Mathematical Concepts
 
@@ -44,20 +47,30 @@ Weights are then normalized to form a valid Posterior Probability Mass Function 
 
 $$\hat{x}_{MMSE} = \sum_{i=1}^{N_{particles}} w_i^{norm} \cdot x_i$$
 
+## Geometric Dilution of Precision (GDOP) Testing
+
+A dedicated testing suite (`geom_testing.py`) is included to evaluate the filter's performance across various physical receiver configurations. Because TDOA relies on the intersection of hyperboloids, poor geometric baselines can severely degrade accuracy regardless of algorithmic robustness. 
+
+The simulation results highlight key failure modes and optimal setups:
+
+* **The Perfect Tetrahedron & Max Volume (Corners):** Yields the fastest convergence and lowest steady-state error. Maximizing the enclosed 3D volume provides the sharpest mathematical intersections.
+* **The Dome & Origin Corner:** Standard configurations that converge reliably, though with a slightly higher error floor compared to a mathematically perfect tetrahedron.
+* **Coplanar (XY Plane / XZ Wall):** Demonstrates a predictable partial failure. The filter accurately resolves the two axes spanning the plane but fails on the orthogonal axis due to symmetrical ambiguity (e.g., unable to distinguish between $+Z$ and $-Z$).
+* **Collinear (The Line):** Results in catastrophic tracking failure. The algorithm cannot resolve the rotational ambiguity around the axis of the receivers, often collapsing the particles into an infinite "ring" of zero-error rather than a single point.
+* **Tight Cluster:** Simulates a poor baseline relative to the target distance. The true time differences become so infinitesimally small that the filter's artificial process noise dominates, resulting in high variance and a failure to settle.
+
 ## Usage & Tuning
 
 The filter is encapsulated in an object-oriented structure to allow for easy hyperparameter tuning based on the physical realities of the hardware sensors and the scale of the deployment environment.
 
 - `R`: Set this to the physical baseline variance of the TDOA sensors ($\sigma^2$).
-    
 - `C_Q`: Scale this based on the bounding box of the search space. $\sqrt{C_Q}$ should cover a meaningful percentage of the grid to ensure adequate early exploration.
-    
 - `C_R`: Tune this for convergence speed. Increase to force longer exploration; decrease if particles are failing to settle.
     
-
 ## Dependencies
 
 - `numpy`: Matrix operations, linear algebra (inversions), and vectorized stochastic sampling.
+- `matplotlib`: Visualization of geometric convergence curves.
     
 ## Author
 
