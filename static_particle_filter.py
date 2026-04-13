@@ -139,9 +139,7 @@ if __name__ == "__main__":
         Point("Receiver", 0.89, 0.38, 0.07)
     ]
 
-    # Your D_NP matrix had Receiver 0 on the first row/column.
-    # We extract the path differences relative to Receiver 0: d_10, d_20, d_30
-    # From your D_NP array: D_NP[1][0], D_NP[2][0], D_NP[3][0]
+    
     measured_delta_d = np.array([
         [-0.23448966], 
         [-0.16878072], 
