@@ -1,6 +1,6 @@
 
 
-# TDOA-Based Static Transmitter Localization using Simulated Annealing Particle Filters
+# TDOA-Based Static Transmitter Localization using Particle Filters
 
 ## Overview
 
